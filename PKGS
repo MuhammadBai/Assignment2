@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Check if the script is being run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script needs root privileges."
+    exit 1
+fi
+
+# Check if pkgs.txt exists
+if [[ ! -f pkgs.txt ]]; then
+    echo "Error: pkgs.txt not found!"
+    exit 1
+fi
+
+# Read the package list and install each package
+while IFS= read -r package; do
+    if [[ -n "$package" ]]; then  # Ensure the line is not empty
+        echo "Installing $package..."
+        pacman -S --noconfirm "$package" || echo "Failed to install $package"
+    fi
+done < pkgs.txt
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This script creates a list of packages in pkgs.txt
+
+
+packages=("kakoune" "tmux")
+
+# Write each package to pkgs.txt
+echo "Creating pkgs.txt with the following packages:"
+for package in "${packages[@]}"; do
+    echo "$package" >> pkgs.txt
+    echo "- $package"
+done
+
+echo "Package list saved to pkgs.txt"

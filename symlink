@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+# Func
+symlinks() {
+    # Define the path to the cloned configuration files
+    CONFIG_DIR="./config"
+
+    # Create ~/bin folder if it doesn’t exist and link files
+    mkdir -p ~/bin
+    ln -sf "$CONFIG_DIR/bin/sayhi" ~/bin/sayhi
+    ln -sf "$CONFIG_DIR/bin/install-fonts" ~/bin/install-fonts
+
+    # Link Kakoune and Tmux configuration files in ~/.config
+    mkdir -p ~/.config/kak
+    ln -sf "$CONFIG_DIR/config/kak/kakrc" ~/.config/kak/kakrc
+    mkdir -p ~/.config/tmux
+    ln -sf "$CONFIG_DIR/config/tmux/tmux.conf" ~/.config/tmux/tmux.conf
+
+    # Link bashrc to ~/.bashrc
+    ln -sf "$CONFIG_DIR/home/bashrc" ~/.bashrc
+
+    echo "Symbolic links created successfully."
+}
+
+# Call the function to create symlinks
+symlinks

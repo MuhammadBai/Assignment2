@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+echo "Starting system setup..."
+
+# Run package installation
+./PKGS
+
+# Run symlink file
+./symlink
+
+echo "System setup complete."
