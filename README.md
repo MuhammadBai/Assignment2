@@ -124,17 +124,17 @@ sudo ./user_creation_script -u <username> [-s <shell>] [-g <additional_groups>]
 
 Example command:
 
-`sudo ./user_creation_script -u sam -s /bin/bash -g nam,pam`
+`sudo ./user_creation_script -u sam -s /bin/bash -g wheel,users`
 
 # Breaking the script for explaination:
 
-## * Shebang
+## Shebang
 
 `#!/bin/bash`
 
 The `#!/bin/bash` line specifies that this script should be run in the Bash shell.
 
-## * Root Check Function (root_check)
+## Root Check Function (root_check)
 ```
 root_check() {
     if [[ $EUID -ne 0 ]]; then
@@ -145,7 +145,7 @@ root_check() {
 ```
 The `root_check` function checks if the script is being executed with root privileges. The `EUID` variable checks the effective user ID. If it’s not root (0), the script outputs an error message and exits.
 
-## * Usage Function 
+## Usage Function 
 ```
 usage() {
     echo "Usage: $0 -u <username> [-s <shell>] [-g <additional_groups>]"
@@ -156,7 +156,7 @@ usage() {
 ```
 The `usage` function displays usage information, helping users understand the command-line options. This function is called if an incorrect option is entered.
 
-## * Initialize Default Values
+## Initialize Default Values
 ```
 username=""
 shell="/bin/bash"  # Default shell
@@ -164,7 +164,7 @@ groups=""
 ```
 Here, variables `username`, `shell`, and `groups` are initialized. If no shell or group options are provided, `shell` defaults to `/bin/bash`.
 
-## * Parse Command-Line Options
+## Parse Command-Line Options
 ```
 while getopts "u:s:g:" opt; do
     case "$opt" in
@@ -178,7 +178,7 @@ done
 ```
 This part of the script handles options entered in the command line using `getopts`. It looks for the `-u`, `-s`, and `-g` options, saving their values to specific variables. If an unrecognized option is used, the script will display a help message showing correct usage, then exit.
 
-## * Check for Required Username
+## Check for Required Username
 ```
 if [[ -z "$username" ]]; then
     echo "Error: Username is required."
@@ -188,7 +188,7 @@ fi
 ```
 If the `username` variable is empty (not provided), an error message is displayed, and the script exits. This ensures that the username is always provided.
 
-## * User Creation Function 
+## User Creation Function 
 ```
 creates_user() {
     echo "Creating user '$username' with shell '$shell' and groups '$groups'..."
@@ -227,7 +227,7 @@ Files from `/etc/skel` which is called skeleton directory as a name tells skel a
 ```
 If `useradd` fails, an error message is displayed, and the script exits.
 
-## * Main Script Execution
+## Main Script Execution
 ```
 root_check
 creates_user
@@ -248,4 +248,26 @@ This command will:
 ### *Important*
 * **Root Access**: Running this script without root access will produce an error and exit.
 
+## Why Use the `wheel` and `users` Groups?
 
+In many Linux systems, you'll encounter predefined groups like `wheel` and `users`. These groups are commonly used to manage user permissions and system access, but you are free to use any groups that suit your needs. Here's a quick overview of what these groups typically do and why you might use them:
+
+### 1. **`wheel` Group**:
+   - **Purpose**: The `wheel` group is often used to give users administrative privileges. Users in the `wheel` group are usually allowed to execute commands with `sudo`, which gives them elevated permissions to perform tasks that require admin rights (like installing software or changing system settings).
+   - **Why It's Used**: If you want to allow a user to perform administrative tasks, adding them to the `wheel` group is a common approach. However, you could choose any other group that you’ve set up for admin tasks, or you might decide not to give the user administrative access at all.
+   - **Customization**: You can replace `wheel` with any group name that fits your specific needs, or leave it out if the user doesn’t need elevated access.
+
+### 2. **`users` Group**:
+   - **Purpose**: The `users` group is a default group for regular, non-administrative users. It's typically used to assign common permissions to all users in the system.
+   - **Why It's Used**: If you want to organize users under a common group for general tasks, the `users` group is a good choice. It's not strictly necessary, and you could use a different group name or even leave it out if you prefer.
+   - **Customization**: Similar to the `wheel` group, you can replace `users` with any other group that suits your system structure. For example, you might use a group like `staff`, `devs`, or `clients` depending on what kind of access you want users to have.
+
+### Can You Use Any Group?
+
+Yes, you can absolutely use any group that already exists on your system, or you can create new groups to suit your needs. For instance, if you want to add a user to a group like `staff` or `devs`, you can do that without any issues.
+
+**Example**:
+If you wanted to add the user to a `developers` group instead of `wheel` or `users`, the script would look like this:
+```
+sudo ./user_creation_script -u Sam -s /bin/bash -g developers
+```
