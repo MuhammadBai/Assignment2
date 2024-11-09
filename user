@@ -1,70 +1,58 @@
 #!/bin/bash
+# This script automates the process of creating a new user with specified options
 
-# Check if the user is root (ID 0)
-if [[ $EUID -ne 0 ]]; then
-    echo "Error: This script must be run as root."
-    exit 1
-fi
-
-# Function to display usage information
-user() {
-    echo "Usage: $0 -u <username> -p <password> -s <shell> -g <additional_groups>"
-    echo "  -u   Specify the username for the new user"
-    echo "  -p   Specify the password for the new user"
-    echo "  -s   Specify the shell for the new user (e.g., /bin/bash)"
-    echo "  -g   Specify additional groups (comma-separated, no spaces)"
-    exit 1
+# Check if the script is running as root
+root_check() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "Error: This script must be run as root."
+        exit 1
+    fi
 }
 
-# Variables to store user details
+# Show script usage information
+show_usage() {
+    echo "Usage: $0 -u <username> [-s <shell>] [-g <additional_groups>]"
+    echo "  -u   Specify the username for the new user (required)"
+    echo "  -s   Specify the shell for the new user (optional, default: /bin/bash)"
+    echo "  -g   Specify additional groups (optional, comma-separated, no spaces)"
+}
+
+# Initialize default values
 username=""
-password=""
-shell=""
+shell="/bin/bash"  # Default shell
 groups=""
 
-# Parse command-line options using getopts
-while getopts "u:p:s:g:" opt; do
+# Parse command-line options
+while getopts "u:s:g:" opt; do
     case "$opt" in
-        u) username=$OPTARG ;;  # Set the username
-        p) password=$OPTARG ;;  # Set the password
-        s) shell=$OPTARG ;;     # Set the shell
-        g) groups=$OPTARG ;;    # Set the additional groups
-        :)  # Handle missing arguments for options
-            echo "Error: -${OPTARG} requires an argument"
-            user
-            ;;
-        *) user ;;  # Show usage for invalid options
+        u) username="$OPTARG" ;;   # Set the username
+        s) shell="$OPTARG" ;;      # Set the shell
+        g) groups="$OPTARG" ;;     # Set additional groups
+        *) show_usage              # Show usage on invalid option
+           exit 1 ;;
     esac
 done
 
-# Shift the processed options
-shift "$((OPTIND - 1))"
-
-# Check if the required username and password options are provided
-if [[ -z "$username" || -z "$password" ]]; then
-    echo "Error: Both username and password are required."
-    user
-fi
-
-# Set default shell if not provided
-if [[ -z "$shell" ]]; then
-    shell="/bin/bash"
-    echo "Shell not specified. Using default shell: $shell"
+# Check if username is provided
+if [[ -z "$username" ]]; then
+    echo "Error: Username is required."
+    show_usage
+    exit 1
 fi
 
 # Function to add the user with specified settings
-create_user() {
+creates_user() {
     echo "Creating user '$username' with shell '$shell' and groups '$groups'..."
 
-    # Add the user with the specified shell and groups
+    # Add user with specified shell and groups, and check for success
     if useradd -m -s "$shell" -G "$groups" "$username"; then
         echo "User '$username' created successfully."
-        
-        # Set the password for the user
-        echo "$username:$password" | chpasswd
-        echo "Password set for '$username'."
 
-        # Copy default files from /etc/skel to the new user's home directory
+        # Prompt for password and apply it
+        echo "Please enter a password for the new user:"
+        passwd "$username"
+
+        # Copy default files to the new user's home directory
         cp -r /etc/skel/. "/home/$username"
         chown -R "$username":"$username" "/home/$username"
         echo "Home directory and default files set up for '$username'."
@@ -74,6 +62,7 @@ create_user() {
     fi
 }
 
-# Create the user after all checks are done
-create_user
+# Run root check, then proceed to create user
+root_check
+creates_user
 
