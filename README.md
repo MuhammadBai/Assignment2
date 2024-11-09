@@ -4,7 +4,7 @@
 In this assignment, i have developed two shell scripting projects which automates system setup tasks and user managment on an Arch Linux environment. The scripts follows the best practices, focusing on error handling, documentation, and utilizing 'getopts' for command=line options.
 
 ---
-# Project 1 - System Setup and Configuration Automation
+# Project 1 - Packages installation setup
 
 This project automates the system setup process on Arch Linux, helping to quickly set up your environment by installing key software packages and organizing configuration files.
 
@@ -33,17 +33,14 @@ This project automates the system setup process on Arch Linux, helping to quickl
 
   echo "Package list saved to pkgs.txt file"
 ```
-* This script defines an array called `packages` that contains the names of the software you want to install (in this case, `kakoune` and `tmux`).
-
-* It loops through each package in the list and writes its name to the `pkgs.txt` file.
-
-* The package names are also displayed on the screen for you to verify.
-
-* **How to Use**: To generate your `pkgs.txt` file, simply run
-
+This script defines an array called `packages` that contains the names of the software you want to install (in this case, `kakoune` and `tmux`).
+It loops through each package in the list and writes its name to the `pkgs.txt` file.
+The package names are also displayed on the screen for you to verify.
+**How to Use**: To generate your `pkgs.txt` file, simply run
 **Before running it make sure it is executable `chmod +x ./packages_list`**
 
 running `sudo ./packages_list` will create a pkgs.txt file with the packages you specified.
+
 
 ## PKGS
 
