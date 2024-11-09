@@ -4,39 +4,100 @@
 In this assignment, i have developed two shell scripting projects which automates system setup tasks and user managment on an Arch Linux environment. The scripts follows the best practices, focusing on error handling, documentation, and utilizing 'getopts' for command=line options.
 
 ---
+# Project 1 - System Setup and Configuration Automation
 
-## Project 1: System Setup Scripts
+This project automates the system setup process on Arch Linux, helping to quickly set up your environment by installing key software packages and organizing configuration files.
 
-### Purpose
-This project automates the installation of essential software packages and creates symbolic links to configuration files stored in a remote Git repository. It speeds uo the sustem setup process, making it fast and repeatable.
+## Overview of Scripts
 
-## 1.`packages_list`
- This script generates a list of software packages that will be installed during setup which are kakoune and tmux.
- 
- * **Purpose**: This automates the creation of a list (`pkgs.txt`) which contains names of software packages to install.
- * **Function**: This adds each specified package to `pkgs.txt` and prints the package name on the console for confirmation.
- * **Its Uses**: 
-          1. make the script excutable with `chmod +x packages_list`   
-          2. show you if it works by the command `sudo ./packages_list`
-          3. this will generate the list of kakoune and tmux in the `pkgs.txt` file. 
- * It creates a lists of packages inside pkgs.txt file.
+### `packages_list`
 
- ## 2.`PKGS`
-This script installs all packages in pkgs.txt using the pacman package manager.
+**Purpose:** This script generates a list of software packages you want to install.
 
-* **Purpose**: It makes the installation of multiple packagess simple by reading it from `pkgs.txt` file.
-* **Function**: 
-    * It checks if the script is run as root which is necessary for package installation.
-    * It verifies the existence of pkgs.txt and reads package names from it.
-    * Then it installs each package, outputs each package name as it installs, and tells you if a package fails to install.
-* **It Uses**: 
-        1. make the script executable with `chmod +x PKGS`
-        2.`sudo ./PKGS`
-        3. After running it, this will read the `packages_list` script to install the packages it see in the `pkgs.txt` file.
+- **What It Does:** It creates the `pkgs.txt` file, which holds the names of the packages you need for the setup. Each package name is written to this file, and the script also prints the package names on the terminal so you can see what’s being added.
+  
+- **How It Works:**
+  ```bash
+  #!/bin/bash
+
+  # This script will create a list of packages in pkgs.txt
+
+  packages=("kakoune" "tmux")
+
+  # Write each package to pkgs.txt
+  echo "Creating pkgs.txt with the following packages:"
+  for package in "${packages[@]}"; do
+      echo "$package" >> pkgs.txt
+      echo "-$package"
+  done
+
+  echo "Package list saved to pkgs.txt file"
+```
+* This script defines an array called `packages` that contains the names of the software you want to install (in this case, `kakoune` and `tmux`).
+
+* It loops through each package in the list and writes its name to the `pkgs.txt` file.
+
+* The package names are also displayed on the screen for you to verify.
+
+* **How to Use**: To generate your `pkgs.txt` file, simply run
+
+**Before running it make sure it is executable `chmod +x ./packages_list`**
+
+running `sudo ./packages_list` will create a pkgs.txt file with the packages you specified.
+
+## PKGS
+
+### Purpose:
+This script installs all the packages listed in `pkgs.txt`.
+
+### What It Does:
+- Checks if the script is run as root because installing packages requires administrator privileges.
+- Ensures the `pkgs.txt` file exists and is readable.
+- Installs the packages one by one using the `pacman` package manager. If any installation fails, it reports the failure.
+
+### How It Works:
+
+```
+#!/bin/bash
+
+# This Script will install packages listed in pkgs.txt file.
+
+# Ensure script is run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run this script as root."
+    exit 1
+fi
+
+# Check if pkgs.txt exists
+if [[ ! -f pkgs.txt ]]; then
+    echo "Error: pkgs.txt not found."
+    exit 1
+fi
+
+# Read pkgs.txt and install each package
+while IFS= read -r package; do
+    if [[ -n "$package" ]]; then  # Skip empty lines
+        echo "Installing $package..."
+        pacman -S --noconfirm "$package" || echo "Failed to install $package"
+    fi
+done < pkgs.txt        
+```
+### Root Privilege Check:
+The script ensures you’re running it as the root user, which is necessary to install software.
+
+### File Check:
+It makes sure that `pkgs.txt` is present, and reads the list of packages from it.
+
+### Installation Loop:
+It loops through the file and installs each package using `pacman`, displaying progress for each package. If a package installation fails, it notifies you.
+
+1. make the script executable with `chmod +x PKGS`
+2. `sudo ./PKGS`
+3.  After running it, this will read the `packages_list` script to install the packages it see in the `pkgs.txt` file.
 * **Dependencies**: It requires `pkgs.txt` to be in the same directory.
 
-## 3.`pkgs.txt`
-A text file listing the packages to install which is used by PKGS script.
+## `pkgs.txt`
+A text file lists the packages to install which is used by PKGS script.
 * **Purpose**: It provides a lsit of package names for installation.
 * **Format**: Each package name is listed on a new line.
 * **Example**: 
@@ -45,38 +106,97 @@ kakoune
 tmux
 ```
 * **It Uses**: 
-    * `pkgs.txt` is generated by `packages_list` and read by `PKGS`.
-    *  you can see the two packages kakoune and tmux after running `packages_list` script.
+    * `pkgs.txt` is generated by `packages_list` scrfipt, and the `PKGS` script uses this file to know which packages to install.
+    *  you can see the two packages kakoune and tmux in pkgs.txt file after running `packages_list` script.
 
-## 4.`symlink`:
+## `symlink`:
     This script creates shortcuts (called "symbolic links") for your configuration files. These shortcuts let you easily access the files from standard locations on your system like `~/bin` or `~/.config`.
 
-* **Purpose**: It organizes your configuration files so they are easy to access and in consistent place.
-* **What it does**:
-    * It creates the needed folder (like `~/bin` and `~/.config/kak`) if they are not ther yet.
-    * It sets up links for specific config files like for kakoune, Tmux, and `.bashrc`.
-    * It shows a confirmation message when the links are created.
-* **How to Use**:
-            1. make it executable by `chmod +x symlink`
-            2. `sudo ./symlink` will tell you wether the symbolic links are created or not. 
+### What It Does:
+- Creates the necessary directories (like `~/bin` and `~/.config/kak`) if they don’t already exist.
+- Sets up symbolic links for various configuration files, such as Kakoune, Tmux, and `.bashrc`.
+- After the links are created, it prints Symbolic links for configuration files have been successfully set up.
 
-## 5. `setup`:
-This is the main script that runs the entire setup process.
+### How It Works:
 
-* **Purpose**: 
-    This is the main setup that runs the entire process.
-* **What it does**:
-    * Shows a message that setup is installing.
+```
+#!/bin/bash
+# This script sets up symbolic links for configuration files.
+
+symlinks() {
+    # Path to directory that contains configuration files
+    CONFIG_PATH="./configs"
+
+    # Create ~/bin directory if it doesn't exist and link scripts
+    mkdir -p ~/bin
+    ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
+    ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts
+
+    # Kakoune and Tmux configuration links in ~/.config
+    mkdir -p ~/.config/kak
+    ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
+    mkdir -p ~/.config/tmux
+    ln -sf "$CONFIG_PATH/config/tmux/tmux.conf" ~/.config/tmux/tmux.conf
+
+    # it links the custom bashrc to ~/.bashrc
+    ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
+
+    # Print a confirmation message
+    echo "Symbolic links for configuration files have been successfully set up."
+}
+
+# Call the function to create the symbolic links
+symlinks
+```
+*  First, it ensures that the necessary directories (~/bin, ~/.config/kak, ~/.config/tmux) exist.
+* It links files like sayhi and install-fonts from the ./configs directory to ~/bin and configuration files like kakrc and tmux.conf to their appropriate locations in ~/.config.
+
+### Next Steps:
+        1. make it executable by `chmod +x symlink`
+        2. `sudo ./symlink` will tell you wether the symbolic links are created or not. 
+
+## setup
+
+### Purpose:
+This script takes care of the whole system setup by running the other scripts.
+
+### What It Does:
+* First, it runs the `PKGS` script to install all the necessary packages.
+* Next, it runs the `symlink` script to create all the symbolic links for configuration files.
+* Finally, it shows a message to let you know that the setup is complete.
+
+### How It Works:
+
+```
+#!/bin/bash
+
+echo "Starting system setup..."
+
+# Run package installation
+./PKGS
+
+# Run symlink file
+./symlink
+
+echo "System setup complete."
+```
+### What it does: 
     * Runs the `PKGS` script to install packages.
     * This runs the `symlink` script to set up config file links.
     * Prints a message when setup is complete.
+
+*summary*:
+    This is the main script you’ll use to set up everything. It first installs the packages by running the `PKGS` script, then sets up the necessary links by running the `symlink` script.
+
 * **How to use**:
         1. make the script executable `chmod +x setup`
         2. install the packages by running `sudo ./setup`
 
+## Recap steps for installation:
+
 # Setup Instructions
 Run `packages_list` to create `pkgs.txt` with the packages you want to install:
-    `./packages_list`
+    `sudo ./packages_list`
 
 # Run Setup
 Run `setup` to install the packages and set up links for the configuration files:
@@ -84,10 +204,9 @@ Run `setup` to install the packages and set up links for the configuration files
 
 
 # Requirements:
-    * Arch linux Operating System.
-    * To run `PKGS` and `setup` (for installing packages) you need root access.
-    * `pacman` package manager should be installed and setup.
-
+    Arch linux Operating System.
+    To run `PKGS` and `setup` (for installing packages) you need root access.
+    `pacman` package manager should be installed and setup.
 
 **you can edit `pkgs.txt` to add any additional package you need.**
 
