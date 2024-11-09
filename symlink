@@ -1,27 +1,29 @@
 #!/bin/bash
+# This script sets up symbolic links for configuration files.
 
-
-# Func
+# Function to set up symbolic links
 symlinks() {
-    # Define the path to the cloned configuration files
-    CONFIG_DIR="./config"
+    # Path to the directory that contains the configuration files
+    CONFIG_PATH="./configs"
 
-    # Create ~/bin folder if it doesn’t exist and link files
+    # Create the ~/bin directory if it doesn’t exist and link the scripts
     mkdir -p ~/bin
-    ln -sf "$CONFIG_DIR/bin/sayhi" ~/bin/sayhi
-    ln -sf "$CONFIG_DIR/bin/install-fonts" ~/bin/install-fonts
+    ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
+    ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts
 
-    # Link Kakoune and Tmux configuration files in ~/.config
+    # Set up Kakoune and Tmux configuration links in ~/.config
     mkdir -p ~/.config/kak
-    ln -sf "$CONFIG_DIR/config/kak/kakrc" ~/.config/kak/kakrc
+    ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
     mkdir -p ~/.config/tmux
-    ln -sf "$CONFIG_DIR/config/tmux/tmux.conf" ~/.config/tmux/tmux.conf
+    ln -sf "$CONFIG_PATH/config/tmux/tmux.conf" ~/.config/tmux/tmux.conf
 
-    # Link bashrc to ~/.bashrc
-    ln -sf "$CONFIG_DIR/home/bashrc" ~/.bashrc
+    # Link the custom bashrc to ~/.bashrc
+    ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
 
-    echo "Symbolic links created successfully."
+    # Print a confirmation message to the user
+    echo "Symbolic links for configuration files have been successfully set up."
 }
 
-# Call the function to create symlinks
+# this Calls the function from the top to create the symbolic links
 symlinks
+

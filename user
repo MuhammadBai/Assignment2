@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# Check if the user is root (ID 0)
+if [[ $EUID -ne 0 ]]; then
+    echo "Error: This script must be run as root."
+    exit 1
+fi
+
+# Function to display usage information
+user() {
+    echo "Usage: $0 -u <username> -p <password> -s <shell> -g <additional_groups>"
+    echo "  -u   Specify the username for the new user"
+    echo "  -p   Specify the password for the new user"
+    echo "  -s   Specify the shell for the new user (e.g., /bin/bash)"
+    echo "  -g   Specify additional groups (comma-separated, no spaces)"
+    exit 1
+}
+
+# Variables to store user details
+username=""
+password=""
+shell=""
+groups=""
+
+# Parse command-line options using getopts
+while getopts "u:p:s:g:" opt; do
+    case "$opt" in
+        u) username=$OPTARG ;;  # Set the username
+        p) password=$OPTARG ;;  # Set the password
+        s) shell=$OPTARG ;;     # Set the shell
+        g) groups=$OPTARG ;;    # Set the additional groups
+        :)  # Handle missing arguments for options
+            echo "Error: -${OPTARG} requires an argument"
+            user
+            ;;
+        *) user ;;  # Show usage for invalid options
+    esac
+done
+
+# Shift the processed options
+shift "$((OPTIND - 1))"
+
+# Check if the required username and password options are provided
+if [[ -z "$username" || -z "$password" ]]; then
+    echo "Error: Both username and password are required."
+    user
+fi
+
+# Set default shell if not provided
+if [[ -z "$shell" ]]; then
+    shell="/bin/bash"
+    echo "Shell not specified. Using default shell: $shell"
+fi
+
+# Function to add the user with specified settings
+create_user() {
+    echo "Creating user '$username' with shell '$shell' and groups '$groups'..."
+
+    # Add the user with the specified shell and groups
+    if useradd -m -s "$shell" -G "$groups" "$username"; then
+        echo "User '$username' created successfully."
+        
+        # Set the password for the user
+        echo "$username:$password" | chpasswd
+        echo "Password set for '$username'."
+
+        # Copy default files from /etc/skel to the new user's home directory
+        cp -r /etc/skel/. "/home/$username"
+        chown -R "$username":"$username" "/home/$username"
+        echo "Home directory and default files set up for '$username'."
+    else
+        echo "Error: Failed to create user '$username'."
+        exit 1
+    fi
+}
+
+# Create the user after all checks are done
+create_user
+
