@@ -117,22 +117,26 @@ tmux
 
 ### How It Works:
 
+### Shebang specifies the script interpreter
 ```
 #!/bin/bash
 ```
 * This line specifies that the script should be interpreted by the bash shell. It's necessary for the script to know which interpreter to use when executed.
 
+### Symlinks() function
 ```
 symlinks() {
 }
 ```
 * The function symlinks contains all the operations related to setting up symbolic links. By defining the function, you can call it later in the script to execute the commands that follow.
 
+### Define configuration files directory
 ```
     CONFIG_PATH="./configs"
 ```
 * This variable holds the path to the directory where the configuration files are stored. In this case, the directory is ./configs (relative to where the script is executed).
 
+### Create ~/bin Directory and link scripts
 ```
     mkdir -p ~/bin
     ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
@@ -142,6 +146,8 @@ symlinks() {
 * `mkdir -p ~/bin`: Creates the ~/bin directory if it doesn’t already exist (`-p` ensures no error is thrown if the directory already exists).
 * ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi: Creates a symbolic link from `./configs/bin/sayhi to ~/bin/sayhi`. The `-sf` flag forces the creation of the link, replacing any existing file or link with the same name.
 * Similarly, `ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts` creates a symbolic link for the `install-fonts` script.
+
+### Kakoune and Tmux Configuration Links in ~/.config
 ```
     mkdir -p ~/.config/kak
     ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
@@ -153,16 +159,21 @@ This part creates symbolic links for Kakoune and Tmux configuration files in the
 `ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc`: Creates a symbolic link from the custom Kakoune configuration `(./configs/config/kak/kakrc)` to `~/.config/kak/kakrc`, allowing Kakoune to use the custom configuration.
 The same process is repeated for Tmux with its configuration file.
 
+### Link the Custom Bashrc to ~/.bashrc
+
 ```
     ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
 ```
 This line creates a symbolic link for the custom Bash configuration file.
 * The `ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc` command creates a symbolic link from the custom Bash configuration (`./configs/home/bashrc)` to `~/.bashrc`, which is the default configuration file for Bash shells. This ensures that the custom configuration is used when the user opens a new shell session.
 
+### Prints the message
 ```
     echo "Symbolic links for configuration files have been successfully set up."
 ```
 * After setting up all the symbolic links, this message is displayed to inform the user that the process has completed successfully.
+
+### Call the functionb to create Symbolic links
 
 ```
 symlinks
