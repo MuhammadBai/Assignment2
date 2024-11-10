@@ -33,26 +33,23 @@ This project automates the system setup process on Arch Linux, helping to quickl
 
   echo "Package list saved to pkgs.txt file"
 ```
-This script defines an array called `packages` that contains the names of the software you want to install (in this case, `kakoune` and `tmux`).
-It loops through each package in the list and writes its name to the `pkgs.txt` file.
-The package names are also displayed on the screen for you to verify.
-**How to Use**: To generate your `pkgs.txt` file, simply run
-**Before running it make sure it is executable `chmod +x ./packages_list`**
-
-running `sudo ./packages_list` will create a pkgs.txt file with the packages you specified.
-
-
-## PKGS
+## packages_list
 
 ### Purpose:
-This script installs all the packages listed in `pkgs.txt`.
+This script creates a `pkgs.txt` file that lists the software packages you want to install, such as `kakoune` and `tmux`.
 
 ### What It Does:
-- Checks if the script is run as root because installing packages requires administrator privileges.
-- Ensures the `pkgs.txt` file exists and is readable.
-- Installs the packages one by one using the `pacman` package manager. If any installation fails, it reports the failure.
+- Defines an array called `packages` that contains the software names.
+- Loops through each package and writes its name to the `pkgs.txt` file.
+- Displays the package names on the screen for you to verify.
 
-### How It Works:
+### How to Use:
+To generate your `pkgs.txt` file, run:
+
+```bash
+chmod +x ./packages_list  # Make the script executable
+sudo ./packages_list      # Run the script to create pkgs.txt
+
 
 ```
 #!/bin/bash
