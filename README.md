@@ -10,7 +10,7 @@ This project automates the system setup process on Arch Linux, helping to quickl
 
 ## Overview of Scripts
 
-### `packages_list
+### packages_list
 
   ```
   !bin/bash
@@ -38,17 +38,16 @@ This script creates a `pkgs.txt` file that lists the software packages you want 
 * Displays the package names on the screen for you to verify.
 
 ### How to Use:
-To generate your `pkgs.txt` file, run:
+To generate your `pkgs.txt` file:
 
-```
-chmod +x ./packages_list  # Make the script executable
-sudo ./packages_list      # Run the script to create pkgs.txt
-```
-
-## This Scrpt will install packages listed in pkgs.txt file.
+### Steps:
+`chmod +x ./packages_list  # Make the script executable first`
+`sudo ./packages_list      # Run the script to create pkgs.txt`
 
 
-### Ensure script is run as root
+### This Scrpt will install packages listed in pkgs.txt file.
+
+### 1.Ensure script is run as root
 ```
 if [[ $EUID -ne 0 ]]; then
     echo "Please run this script as root."
@@ -58,7 +57,7 @@ fi
 * This code ensures that the script is executed with root privileges.
 *  The EUID (Effective User ID) variable is checked. If it's not equal to 0, the script outputs a message asking the user to run the script as root and then exits. The 0 ID corresponds to the root user in Unix-based systems, which is required for installing software and making system changes.
 
-### Check if pkgs.txt exists
+### 2.Check if pkgs.txt exists
 ```
 if [[ ! -f pkgs.txt ]]; then
     echo "Error: pkgs.txt not found."
@@ -68,7 +67,7 @@ fi
 This part checks if the pkgs.txt file exists in the same directory as the script.
 The -f test checks for the existence of the file. If the file doesn't exist, an error message is printed, and the script exits with status 1 which tells error.
 
-### Read pkgs.txt and install each package
+### 3. Read pkgs.txt and install each package
 ```
 while IFS= read -r package; do
     if [[ -n "$package" ]]; then  # Skip empty lines
@@ -117,26 +116,26 @@ tmux
 
 ### How It Works:
 
-### Shebang specifies the script interpreter
+### 1.Shebang specifies the script interpreter
 ```
 #!/bin/bash
 ```
 * This line specifies that the script should be interpreted by the bash shell. It's necessary for the script to know which interpreter to use when executed.
 
-### Symlinks() function
+### 2.Symlinks() function
 ```
 symlinks() {
 }
 ```
 * The function symlinks contains all the operations related to setting up symbolic links. By defining the function, you can call it later in the script to execute the commands that follow.
 
-### Define configuration files directory
+### 3.Define configuration files directory
 ```
     CONFIG_PATH="./configs"
 ```
 * This variable holds the path to the directory where the configuration files are stored. In this case, the directory is ./configs (relative to where the script is executed).
 
-### Create ~/bin Directory and link scripts
+### 4.Create ~/bin Directory and link scripts
 ```
     mkdir -p ~/bin
     ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
@@ -147,7 +146,7 @@ symlinks() {
 * ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi: Creates a symbolic link from `./configs/bin/sayhi to ~/bin/sayhi`. The `-sf` flag forces the creation of the link, replacing any existing file or link with the same name.
 * Similarly, `ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts` creates a symbolic link for the `install-fonts` script.
 
-### Kakoune and Tmux Configuration Links in ~/.config
+### 5.Kakoune and Tmux Configuration Links in ~/.config
 ```
     mkdir -p ~/.config/kak
     ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
@@ -159,7 +158,7 @@ This part creates symbolic links for Kakoune and Tmux configuration files in the
 `ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc`: Creates a symbolic link from the custom Kakoune configuration `(./configs/config/kak/kakrc)` to `~/.config/kak/kakrc`, allowing Kakoune to use the custom configuration.
 The same process is repeated for Tmux with its configuration file.
 
-### Link the Custom Bashrc to ~/.bashrc
+### 6.Link the Custom Bashrc to ~/.bashrc
 
 ```
     ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
@@ -167,13 +166,13 @@ The same process is repeated for Tmux with its configuration file.
 This line creates a symbolic link for the custom Bash configuration file.
 * The `ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc` command creates a symbolic link from the custom Bash configuration (`./configs/home/bashrc)` to `~/.bashrc`, which is the default configuration file for Bash shells. This ensures that the custom configuration is used when the user opens a new shell session.
 
-### Prints the message
+### 7.Prints the message
 ```
     echo "Symbolic links for configuration files have been successfully set up."
 ```
 * After setting up all the symbolic links, this message is displayed to inform the user that the process has completed successfully.
 
-### Call the function to create Symbolic links
+### 8.Call the function to create Symbolic links
 
 ```
 symlinks
@@ -242,7 +241,7 @@ Run `setup` to install the packages and set up links for the configuration files
 
 # Project 2: Creating a User
 
-# User Creation Script
+## User Creation Script
 
 This Bash script automates the process of creating a new user on your system with specified options. It includes options to set the user's shell, add the user to additional groups, and perform necessary setup steps. Below is a breakdown of each section of the script and its functionality.
 
@@ -266,7 +265,7 @@ sudo ./user_creation_script -u <username> [-s <shell>] [-g <additional_groups>]
 
 ### Options
 * -u: Specifies the username for the new user (required).
-* -s: Sets the user's login shell (optional, default: /bin/bash).
+* -s: Sets the user's login shell (optional).
 * -g: Adds the user to additional groups (optional, comma-separated, no spaces).
 
 Example command:
@@ -275,13 +274,13 @@ Example command:
 
 # Breaking the script for explaination:
 
-## Shebang
+### 1.Shebang
 
 `#!/bin/bash`
 
 The `#!/bin/bash` line specifies that this script should be run in the Bash shell.
 
-## Root Check Function (root_check)
+### 2.Root Check Function (root_check)
 ```
 root_check() {
     if [[ $EUID -ne 0 ]]; then
@@ -292,7 +291,7 @@ root_check() {
 ```
 The `root_check` function checks if the script is being executed with root privileges. The `EUID` variable checks the effective user ID. If it’s not root (0), the script outputs an error message and exits.
 
-## Usage Function 
+### 3.Usage Function 
 ```
 usage() {
     echo "Usage: $0 -u <username> [-s <shell>] [-g <additional_groups>]"
@@ -303,7 +302,7 @@ usage() {
 ```
 The `usage` function displays usage information, helping users understand the command-line options. This function is called if an incorrect option is entered.
 
-## Initialize Default Values
+### 4.Initialize Default Values
 ```
 username=""
 shell="/bin/bash"  # Default shell
@@ -311,7 +310,7 @@ groups=""
 ```
 Here, variables `username`, `shell`, and `groups` are initialized. If no shell or group options are provided, `shell` defaults to `/bin/bash`.
 
-## Parse Command-Line Options
+### 5.Parse Command-Line Options
 ```
 while getopts "u:s:g:" opt; do
     case "$opt" in
@@ -325,7 +324,7 @@ done
 ```
 This part of the script handles options entered in the command line using `getopts`. It looks for the `-u`, `-s`, and `-g` options, saving their values to specific variables. If an unrecognized option is used, the script will display a help message showing correct usage, then exit.
 
-## Check for Required Username
+### 6.Check for Required Username
 ```
 if [[ -z "$username" ]]; then
     echo "Error: Username is required."
@@ -335,28 +334,28 @@ fi
 ```
 If the `username` variable is empty (not provided), an error message is displayed, and the script exits. This ensures that the username is always provided.
 
-## User Creation Function 
+### 7.User Creation Function 
 ```
 creates_user() {
     echo "Creating user '$username' with shell '$shell' and groups '$groups'..."
 ```
 This section of the script processes command-line options using `getopts`. It looks for options `-u`, `-s`, and `-g`, storing their values in specific variables. If an option isn’t recognized, the script will show a usage guide and stop running.
 
-### Adding the User
+### 8.Adding the User
 ```
     if useradd -m -s "$shell" -G "$groups" "$username"; then
         echo "User '$username' created successfully."
 ```
 The `useradd` command creates a new user with the specified shell and groups. If the user is successfully created, a success message is displayed.
 
-### Password Prompt
+### 9.Password Prompt
 ```
         echo "Please enter a password for the new user:"
         passwd "$username"
 ```
 This asks the user to set a password. The `passwd` command will be used to secure the account of the user.
 
-### Setting Up Home Directory
+### 10.Setting Up Home Directory
 ```
         cp -r /etc/skel/. "/home/$username"
         chown -R "$username":"$username" "/home/$username"
@@ -364,7 +363,7 @@ This asks the user to set a password. The `passwd` command will be used to secur
 ```
 Files from `/etc/skel` which is called skeleton directory as a name tells skel are copied to the new user’s home directory to provide default files, such as `.bashrc`. Ownership of the files is then updated to match the new user.
 
-### Error Handling
+### 11.Error Handling
 ```
     else
         echo "Error: Failed to create user '$username'."
@@ -374,7 +373,7 @@ Files from `/etc/skel` which is called skeleton directory as a name tells skel a
 ```
 If `useradd` fails, an error message is displayed, and the script exits.
 
-## Main Script Execution
+## To execute it:
 ```
 root_check
 creates_user
