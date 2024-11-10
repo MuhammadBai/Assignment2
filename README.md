@@ -41,9 +41,8 @@ This script creates a `pkgs.txt` file that lists the software packages you want 
 To generate your `pkgs.txt` file:
 
 ### Steps:
-`chmod +x ./packages_list  # Make the script executable first`
-`sudo ./packages_list      # Run the script to create pkgs.txt`
-
+* `chmod +x ./packages_list`  # Make the script executable first
+* `sudo ./packages_list`      # Run the script to create pkgs.txt
 ## PKGS 2nd script
 This Scrpt will install packages listed in pkgs.txt file.
 
