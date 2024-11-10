@@ -10,7 +10,7 @@ root_check() {
 }
 
 # Show script usage information
-show_usage() {
+usage(){
     echo "Usage: $0 -u <username> [-s <shell>] [-g <additional_groups>]"
     echo "  -u   Specify the username for the new user (required)"
     echo "  -s   Specify the shell for the new user (optional, default: /bin/bash)"
