@@ -47,7 +47,7 @@ To generate your `pkgs.txt` file:
 
 ### This Scrpt will install packages listed in pkgs.txt file.
 
-### 1.Ensure script is run as root
+### 1. Ensure script is run as root.
 ```
 if [[ $EUID -ne 0 ]]; then
     echo "Please run this script as root."
@@ -57,7 +57,7 @@ fi
 * This code ensures that the script is executed with root privileges.
 *  The EUID (Effective User ID) variable is checked. If it's not equal to 0, the script outputs a message asking the user to run the script as root and then exits. The 0 ID corresponds to the root user in Unix-based systems, which is required for installing software and making system changes.
 
-### 2.Check if pkgs.txt exists
+### 2. Check if pkgs.txt exists
 ```
 if [[ ! -f pkgs.txt ]]; then
     echo "Error: pkgs.txt not found."
@@ -116,26 +116,26 @@ tmux
 
 ### How It Works:
 
-### 1.Shebang specifies the script interpreter
+### 1. Shebang specifies the script interpreter
 ```
 #!/bin/bash
 ```
 * This line specifies that the script should be interpreted by the bash shell. It's necessary for the script to know which interpreter to use when executed.
 
-### 2.Symlinks() function
+### 2. Symlinks() function
 ```
 symlinks() {
 }
 ```
 * The function symlinks contains all the operations related to setting up symbolic links. By defining the function, you can call it later in the script to execute the commands that follow.
 
-### 3.Define configuration files directory
+### 3. Define configuration files directory
 ```
     CONFIG_PATH="./configs"
 ```
 * This variable holds the path to the directory where the configuration files are stored. In this case, the directory is ./configs (relative to where the script is executed).
 
-### 4.Create ~/bin Directory and link scripts
+### 4. Create ~/bin Directory and link scripts
 ```
     mkdir -p ~/bin
     ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
@@ -146,7 +146,7 @@ symlinks() {
 * ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi: Creates a symbolic link from `./configs/bin/sayhi to ~/bin/sayhi`. The `-sf` flag forces the creation of the link, replacing any existing file or link with the same name.
 * Similarly, `ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts` creates a symbolic link for the `install-fonts` script.
 
-### 5.Kakoune and Tmux Configuration Links in ~/.config
+### 5. Kakoune and Tmux Configuration Links in ~/.config
 ```
     mkdir -p ~/.config/kak
     ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
@@ -158,7 +158,7 @@ This part creates symbolic links for Kakoune and Tmux configuration files in the
 `ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc`: Creates a symbolic link from the custom Kakoune configuration `(./configs/config/kak/kakrc)` to `~/.config/kak/kakrc`, allowing Kakoune to use the custom configuration.
 The same process is repeated for Tmux with its configuration file.
 
-### 6.Link the Custom Bashrc to ~/.bashrc
+### 6. Link the Custom Bashrc to ~/.bashrc
 
 ```
     ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
@@ -166,13 +166,13 @@ The same process is repeated for Tmux with its configuration file.
 This line creates a symbolic link for the custom Bash configuration file.
 * The `ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc` command creates a symbolic link from the custom Bash configuration (`./configs/home/bashrc)` to `~/.bashrc`, which is the default configuration file for Bash shells. This ensures that the custom configuration is used when the user opens a new shell session.
 
-### 7.Prints the message
+### 7. Prints the message
 ```
     echo "Symbolic links for configuration files have been successfully set up."
 ```
 * After setting up all the symbolic links, this message is displayed to inform the user that the process has completed successfully.
 
-### 8.Call the function to create Symbolic links
+### 8. Call the function to create Symbolic links
 
 ```
 symlinks
@@ -274,13 +274,13 @@ Example command:
 
 # Breaking the script for explaination:
 
-### 1.Shebang
+### 1. Shebang
 
 `#!/bin/bash`
 
 The `#!/bin/bash` line specifies that this script should be run in the Bash shell.
 
-### 2.Root Check Function (root_check)
+### 2. Root Check Function (root_check)
 ```
 root_check() {
     if [[ $EUID -ne 0 ]]; then
@@ -291,7 +291,7 @@ root_check() {
 ```
 The `root_check` function checks if the script is being executed with root privileges. The `EUID` variable checks the effective user ID. If it’s not root (0), the script outputs an error message and exits.
 
-### 3.Usage Function 
+### 3. Usage Function 
 ```
 usage() {
     echo "Usage: $0 -u <username> [-s <shell>] [-g <additional_groups>]"
@@ -302,7 +302,7 @@ usage() {
 ```
 The `usage` function displays usage information, helping users understand the command-line options. This function is called if an incorrect option is entered.
 
-### 4.Initialize Default Values
+### 4. Initialize Default Values
 ```
 username=""
 shell="/bin/bash"  # Default shell
@@ -310,7 +310,7 @@ groups=""
 ```
 Here, variables `username`, `shell`, and `groups` are initialized. If no shell or group options are provided, `shell` defaults to `/bin/bash`.
 
-### 5.Parse Command-Line Options
+### 5. Parse Command-Line Options
 ```
 while getopts "u:s:g:" opt; do
     case "$opt" in
@@ -324,7 +324,7 @@ done
 ```
 This part of the script handles options entered in the command line using `getopts`. It looks for the `-u`, `-s`, and `-g` options, saving their values to specific variables. If an unrecognized option is used, the script will display a help message showing correct usage, then exit.
 
-### 6.Check for Required Username
+### 6. Check for Required Username
 ```
 if [[ -z "$username" ]]; then
     echo "Error: Username is required."
@@ -334,28 +334,28 @@ fi
 ```
 If the `username` variable is empty (not provided), an error message is displayed, and the script exits. This ensures that the username is always provided.
 
-### 7.User Creation Function 
+### 7. User Creation Function 
 ```
 creates_user() {
     echo "Creating user '$username' with shell '$shell' and groups '$groups'..."
 ```
 This section of the script processes command-line options using `getopts`. It looks for options `-u`, `-s`, and `-g`, storing their values in specific variables. If an option isn’t recognized, the script will show a usage guide and stop running.
 
-### 8.Adding the User
+### 8. Adding the User
 ```
     if useradd -m -s "$shell" -G "$groups" "$username"; then
         echo "User '$username' created successfully."
 ```
 The `useradd` command creates a new user with the specified shell and groups. If the user is successfully created, a success message is displayed.
 
-### 9.Password Prompt
+### 9. Password Prompt
 ```
         echo "Please enter a password for the new user:"
         passwd "$username"
 ```
 This asks the user to set a password. The `passwd` command will be used to secure the account of the user.
 
-### 10.Setting Up Home Directory
+### 10. Setting Up Home Directory
 ```
         cp -r /etc/skel/. "/home/$username"
         chown -R "$username":"$username" "/home/$username"
@@ -363,7 +363,7 @@ This asks the user to set a password. The `passwd` command will be used to secur
 ```
 Files from `/etc/skel` which is called skeleton directory as a name tells skel are copied to the new user’s home directory to provide default files, such as `.bashrc`. Ownership of the files is then updated to match the new user.
 
-### 11.Error Handling
+### 11. Error Handling
 ```
     else
         echo "Error: Failed to create user '$username'."
@@ -399,14 +399,14 @@ This command will:
 In many Linux systems, you'll encounter predefined groups like `wheel` and `users`. These groups are commonly used to manage user permissions and system access, but you are free to use any groups that suit your needs. Here's a quick overview of what these groups typically do and why you might use them:
 
 ### 1. **`wheel` Group**:
-   - **Purpose**: The `wheel` group is often used to give users administrative privileges. Users in the `wheel` group are usually allowed to execute commands with `sudo`, which gives them elevated permissions to perform tasks that require admin rights (like installing software or changing system settings).
+   -  The `wheel` group is often used to give users administrative privileges. Users in the `wheel` group are usually allowed to execute commands with `sudo`, which gives them elevated permissions to perform tasks that require admin rights (like installing software or changing system settings).
    - **Why It's Used**: If you want to allow a user to perform administrative tasks, adding them to the `wheel` group is a common approach. However, you could choose any other group that you’ve set up for admin tasks, or you might decide not to give the user administrative access at all.
-   - **Customization**: You can replace `wheel` with any group name that fits your specific needs, or leave it out if the user doesn’t need elevated access.
+   -  You can replace `wheel` with any group name that fits your specific needs, or leave it out if the user doesn’t need elevated access.
 
 ### 2. **`users` Group**:
-   - **Purpose**: The `users` group is a default group for regular, non-administrative users. It's typically used to assign common permissions to all users in the system.
+   -  The `users` group is a default group for regular, non-administrative users. It's typically used to assign common permissions to all users in the system.
    - **Why It's Used**: If you want to organize users under a common group for general tasks, the `users` group is a good choice. It's not strictly necessary, and you could use a different group name or even leave it out if you prefer.
-   - **Customization**: Similar to the `wheel` group, you can replace `users` with any other group that suits your system structure. For example, you might use a group like `staff`, `devs`, or `clients` depending on what kind of access you want users to have.
+   -  Similar to the `wheel` group, you can replace `users` with any other group that suits your system structure. For example, you might use a group like `staff`, `devs`, or `clients` depending on what kind of access you want users to have.
 
 ### Can You Use Any Group?
 
