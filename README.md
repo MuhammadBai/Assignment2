@@ -404,7 +404,7 @@ In many Linux systems, you'll see predefined groups like `wheel` and `users`. Th
   * You can replace `wheel` with any group name that fits your specific needs, or leave it out if the user doesn’t need elevated access.
 
 ### 2. **`users` Group**:
-    * The `users` group is a default group for regular, non-administrative users. It's typically used to assign common permissions to all users in the system.
-    * if you want to organize users under a common group for general tasks, the `users` group is a good choice. It's not strictly necessary, and you could use a different group name or even leave it out if you prefer.
+   * The `users` group is a default group for regular, non-administrative users. It's typically used to assign common permissions to all users in the system.
+   * if you want to organize users under a common group for general tasks, the `users` group is a good choice. It's not strictly necessary, and you could use a different group name or even leave it out if you prefer.
 
 
