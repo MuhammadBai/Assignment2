@@ -45,24 +45,31 @@ chmod +x ./packages_list  # Make the script executable
 sudo ./packages_list      # Run the script to create pkgs.txt
 ```
 
-# This Script will install packages listed in pkgs.txt file.
+## This Scrpt will install packages listed in pkgs.txt file.
 
+
+### Ensure script is run as root
 ```
-# Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
     echo "Please run this script as root."
     exit 1
 fi
 ```
+* This code ensures that the script is executed with root privileges.
+*  The EUID (Effective User ID) variable is checked. If it's not equal to 0, the script outputs a message asking the user to run the script as root and then exits. The 0 ID corresponds to the root user in Unix-based systems, which is required for installing software and making system changes.
+
+### Check if pkgs.txt exists
 ```
-# Check if pkgs.txt exists
 if [[ ! -f pkgs.txt ]]; then
     echo "Error: pkgs.txt not found."
     exit 1
 fi
 ```
+This part checks if the pkgs.txt file exists in the same directory as the script.
+The -f test checks for the existence of the file. If the file doesn't exist, an error message is printed, and the script exits with status 1 which tells error.
+
+### Read pkgs.txt and install each package
 ```
-# Read pkgs.txt and install each package
 while IFS= read -r package; do
     if [[ -n "$package" ]]; then  # Skip empty lines
         echo "Installing $package..."
@@ -70,15 +77,18 @@ while IFS= read -r package; do
     fi
 done < pkgs.txt        
 ```
-### Root Privilege Check:
-The script ensures you’re running it as the root user, which is necessary to install software.
+* This block reads each line from the `pkgs.txt` file and installs the listed packages using the `pacman` package manager.
+* `while IFS= read -r package`: This loop reads each line from pkgs.txt and stores it in the package variable. The IFS= (Internal Field Separator) ensures that leading/trailing spaces are not trimmed.
+* `if [[ -n "$package" ]]`: This condition ensures that the line is not empty before attempting to install a package.
+* `pacman -S --noconfirm "$package`": This command uses pacman to install the package. The `--noconfirm` flag automatically confirms any prompts like installation and dependencies.
+* `|| echo "Failed to install $package`": If the installation fails for any reason, an error message is printed, indicating the failed package.
 
-### File Check:
-It makes sure that `pkgs.txt` is present, and reads the list of packages from it.
+### Summary:
+* The script first checks if it's running as root, which is required to install software.
+* It then verifies that the `pkgs.txt` file is available, which contains the names of the packages to install.
+* Finally, the script reads each package from `pkgs.txt`, and for each package, it attempts to install it using `pacman`. If an installation fails, it reports the error, but the script continues to process the remaining packages.
 
-### Installation Loop:
-It loops through the file and installs each package using `pacman`, displaying progress for each package. If a package installation fails, it notifies you.
-
+### Next Steps: 
 1. make the script executable with `chmod +x PKGS`
 2. `sudo ./PKGS`
 3.  After running it, this will read the `packages_list` script to install the packages it see in the `pkgs.txt` file.
@@ -86,8 +96,8 @@ It loops through the file and installs each package using `pacman`, displaying p
 
 ## `pkgs.txt`
 A text file lists the packages to install which is used by PKGS script.
-* **Purpose**: It provides a lsit of package names for installation.
-* **Format**: Each package name is listed on a new line.
+*  It provides a lsit of package names for installation.
+*  Each package name is listed on a new line.
 * **Example**: 
 ```
 kakoune
@@ -109,35 +119,60 @@ tmux
 
 ```
 #!/bin/bash
-# This script sets up symbolic links for configuration files.
+```
+* This line specifies that the script should be interpreted by the bash shell. It's necessary for the script to know which interpreter to use when executed.
 
+```
 symlinks() {
-    # Path to directory that contains configuration files
-    CONFIG_PATH="./configs"
+}
+```
+* The function symlinks contains all the operations related to setting up symbolic links. By defining the function, you can call it later in the script to execute the commands that follow.
 
-    # Create ~/bin directory if it doesn't exist and link scripts
+```
+    CONFIG_PATH="./configs"
+```
+* This variable holds the path to the directory where the configuration files are stored. In this case, the directory is ./configs (relative to where the script is executed).
+
+```
     mkdir -p ~/bin
     ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi
     ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts
-
-    # Kakoune and Tmux configuration links in ~/.config
+```
+* This section handles linking executable scripts into the user's `~/bin` directory.
+* `mkdir -p ~/bin`: Creates the ~/bin directory if it doesn’t already exist (`-p` ensures no error is thrown if the directory already exists).
+* ln -sf "$CONFIG_PATH/bin/sayhi" ~/bin/sayhi: Creates a symbolic link from `./configs/bin/sayhi to ~/bin/sayhi`. The `-sf` flag forces the creation of the link, replacing any existing file or link with the same name.
+* Similarly, `ln -sf "$CONFIG_PATH/bin/install-fonts" ~/bin/install-fonts` creates a symbolic link for the `install-fonts` script.
+```
     mkdir -p ~/.config/kak
     ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc
     mkdir -p ~/.config/tmux
     ln -sf "$CONFIG_PATH/config/tmux/tmux.conf" ~/.config/tmux/tmux.conf
+```
+This part creates symbolic links for Kakoune and Tmux configuration files in the appropriate directories inside `~/.config`.
+`mkdir -p ~/.config/kak`: Creates the directory ~/.config/kak if it doesn't exist.
+`ln -sf "$CONFIG_PATH/config/kak/kakrc" ~/.config/kak/kakrc`: Creates a symbolic link from the custom Kakoune configuration `(./configs/config/kak/kakrc)` to `~/.config/kak/kakrc`, allowing Kakoune to use the custom configuration.
+The same process is repeated for Tmux with its configuration file.
 
-    # it links the custom bashrc to ~/.bashrc
+```
     ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc
+```
+This line creates a symbolic link for the custom Bash configuration file.
+* The `ln -sf "$CONFIG_PATH/home/bashrc" ~/.bashrc` command creates a symbolic link from the custom Bash configuration (`./configs/home/bashrc)` to `~/.bashrc`, which is the default configuration file for Bash shells. This ensures that the custom configuration is used when the user opens a new shell session.
 
-    # Print a confirmation message
+```
     echo "Symbolic links for configuration files have been successfully set up."
-}
+```
+* After setting up all the symbolic links, this message is displayed to inform the user that the process has completed successfully.
 
-# Call the function to create the symbolic links
+```
 symlinks
 ```
-*  First, it ensures that the necessary directories (~/bin, ~/.config/kak, ~/.config/tmux) exist.
-* It links files like sayhi and install-fonts from the ./configs directory to ~/bin and configuration files like kakrc and tmux.conf to their appropriate locations in ~/.config.
+* This line calls the symlinks function, executing all the commands defined within it. When the script is run, this function will be invoked, and the symbolic links will be created.
+
+Summary:
+* The script defines a function that automates the process of creating symbolic links for configuration files. These links are placed in standard directories like `~/bin` for executables and `~/.config` for application configurations.
+* The script makes sure that the necessary directories exist before creating the symbolic links.
+* The function is then called to execute all the link creation commands, and a confirmation message is printed once all links are set up successfully.
 
 ### Next Steps:
         1. make it executable by `chmod +x symlink`
@@ -156,14 +191,14 @@ This script takes care of the whole system setup by running the other scripts.
 ### How It Works:
 
 ```
-#!/bin/bash
+!/bin/bash
 
 echo "Starting system setup..."
 
-# Run package installation
+Run package installation
 ./PKGS
 
-# Run symlink file
+Run symlink file
 ./symlink
 
 echo "System setup complete."
@@ -182,16 +217,16 @@ echo "System setup complete."
 
 ## Recap steps for installation:
 
-# Setup Instructions
+### Setup Instructions
 Run `packages_list` to create `pkgs.txt` with the packages you want to install:
     `sudo ./packages_list`
 
-# Run Setup
+### Run Setup
 Run `setup` to install the packages and set up links for the configuration files:
     `sudo ./setup`
 
 
-# Requirements:
+## Requirements:
     Arch linux Operating System.
     To run `PKGS` and `setup` (for installing packages) you need root access.
     `pacman` package manager should be installed and setup.
