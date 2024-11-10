@@ -411,8 +411,9 @@ In many Linux systems, you'll see predefined groups like `wheel` and `users`. Th
 
 ## References
 
-1. [Creating a Bash Script to Install Packages](https://unix.stackexchange.com/questions/7
-2. [Writing a Shell Script to Install a List of Applications](https://askubuntu.com/questions/519/how-do-i-write-a-shell-script-to-install-a-list-of-applications) - This AskUbuntu post discusses methods to write a shell script that automates application installation.
-3. [Handling Symbolic Links in Git](https://www.geeksforgeeks.org/how-does-git-handle-symbolic-links/) - Explanation from GeeksforGeeks on how Git manages symbolic links.
-4. [Automating User Account Creation in Linux](https://www.baeldung.com/linux/automate-use
-5. [Shell Script for Adding a User, Setting Password, and Enforcing Password Change](https://kodekloud.com/community/t/i-create-a-shell-script-to-add-user-create-password-and-force-new-user-change-password-but-im-facing-trouble-during
+1. [Pacman - Arch Linux Wiki](https://wiki.archlinux.org/title/Pacman) - Comprehensive documentation on using Pacman, the package manager for Arch Linux, including installation, updates, and configuration.
+2. Creating a Bash Script to Install Packages](https://unix.stackexchange.com/questions/7
+3. [Writing a Shell Script to Install a List of Applications](https://askubuntu.com/questions/519/how-do-i-write-a-shell-script-to-install-a-list-of-applications) - This AskUbuntu post discusses methods to write a shell script that automates application installation.
+4. [Handling Symbolic Links in Git](https://www.geeksforgeeks.org/how-does-git-handle-symbolic-links/) - Explanation from GeeksforGeeks on how Git manages symbolic links.
+5. [Automating User Account Creation in Linux](https://www.baeldung.com/linux/automate-use
+6. [Shell Script for Adding a User, Setting Password, and Enforcing Password Change](https://kodekloud.com/community/t/i-create-a-shell-script-to-add-user-create-password-and-force-new-user-change-password-but-im-facing-trouble-during
