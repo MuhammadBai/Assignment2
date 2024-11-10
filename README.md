@@ -10,14 +10,9 @@ This project automates the system setup process on Arch Linux, helping to quickl
 
 ## Overview of Scripts
 
-### `packages_list`
-
-**Purpose:** This script generates a list of software packages you want to install.
-
-- **What It Does:** It creates the `pkgs.txt` file, which holds the names of the packages you need for the setup. Each package name is written to this file, and the script also prints the package names on the terminal so you can see what’s being added.
-  
-- **How It Works:**
-  ```bash
+### `packages_list
+ 
+  ```
   #!/bin/bash
 
   # This script will create a list of packages in pkgs.txt
@@ -33,41 +28,40 @@ This project automates the system setup process on Arch Linux, helping to quickl
 
   echo "Package list saved to pkgs.txt file"
 ```
-## packages_list
 
 ### Purpose:
 This script creates a `pkgs.txt` file that lists the software packages you want to install, such as `kakoune` and `tmux`.
 
 ### What It Does:
-- Defines an array called `packages` that contains the software names.
-- Loops through each package and writes its name to the `pkgs.txt` file.
-- Displays the package names on the screen for you to verify.
+* Defines an array called `packages` that contains the software names.
+* Loops through each package and writes its name to the `pkgs.txt` file.
+* Displays the package names on the screen for you to verify.
 
 ### How to Use:
 To generate your `pkgs.txt` file, run:
 
-```bash
+```
 chmod +x ./packages_list  # Make the script executable
 sudo ./packages_list      # Run the script to create pkgs.txt
-
-
 ```
-#!/bin/bash
 
 # This Script will install packages listed in pkgs.txt file.
 
+```
 # Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
     echo "Please run this script as root."
     exit 1
 fi
-
+```
+```
 # Check if pkgs.txt exists
 if [[ ! -f pkgs.txt ]]; then
     echo "Error: pkgs.txt not found."
     exit 1
 fi
-
+```
+```
 # Read pkgs.txt and install each package
 while IFS= read -r package; do
     if [[ -n "$package" ]]; then  # Skip empty lines
