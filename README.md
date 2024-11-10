@@ -11,15 +11,15 @@ This project automates the system setup process on Arch Linux, helping to quickl
 ## Overview of Scripts
 
 ### `packages_list
- 
-  ```
-  #!/bin/bash
 
-  # This script will create a list of packages in pkgs.txt
+  ```
+  !bin/bash
+
+  This script will create a list of packages in pkgs.txt
 
   packages=("kakoune" "tmux")
 
-  # Write each package to pkgs.txt
+  Write each package to pkgs.txt
   echo "Creating pkgs.txt with the following packages:"
   for package in "${packages[@]}"; do
       echo "$package" >> pkgs.txt
@@ -173,7 +173,7 @@ This line creates a symbolic link for the custom Bash configuration file.
 ```
 * After setting up all the symbolic links, this message is displayed to inform the user that the process has completed successfully.
 
-### Call the functionb to create Symbolic links
+### Call the function to create Symbolic links
 
 ```
 symlinks
@@ -186,8 +186,8 @@ Summary:
 * The function is then called to execute all the link creation commands, and a confirmation message is printed once all links are set up successfully.
 
 ### Next Steps:
-        1. make it executable by `chmod +x symlink`
-        2. `sudo ./symlink` will tell you wether the symbolic links are created or not. 
+    1. make it executalbe by `chmod_x symlink`
+    2. `sudo ./symlink will tell you weather the symbolic links are created or not.
 
 ## setup
 
@@ -215,11 +215,11 @@ Run symlink file
 echo "System setup complete."
 ```
 ### What it does: 
-    * Runs the `PKGS` script to install packages.
-    * This runs the `symlink` script to set up config file links.
-    * Prints a message when setup is complete.
+  * Runs the `PKGS` script to install packages. 
+  * This runs the `symlink` script to set up config file links.
+  * Prints a message when setup is complete.
 
-*summary*:
+### Summary:
     This is the main script you’ll use to set up everything. It first installs the packages by running the `PKGS` script, then sets up the necessary links by running the `symlink` script.
 
 * **How to use**:
@@ -235,12 +235,6 @@ Run `packages_list` to create `pkgs.txt` with the packages you want to install:
 ### Run Setup
 Run `setup` to install the packages and set up links for the configuration files:
     `sudo ./setup`
-
-
-## Requirements:
-    Arch linux Operating System.
-    To run `PKGS` and `setup` (for installing packages) you need root access.
-    `pacman` package manager should be installed and setup.
 
 **you can edit `pkgs.txt` to add any additional package you need.**
 
@@ -270,10 +264,10 @@ To run the script, use the following command:
 sudo ./user_creation_script -u <username> [-s <shell>] [-g <additional_groups>]
 ```
 
-# **Options**
-    * -u: Specifies the username for the new user (required).
-    * -s: Sets the user's login shell (optional, default: /bin/bash).
-    * -g: Adds the user to additional groups (optional, comma-separated, no spaces).
+### Options
+* -u: Specifies the username for the new user (required).
+* -s: Sets the user's login shell (optional, default: /bin/bash).
+* -g: Adds the user to additional groups (optional, comma-separated, no spaces).
 
 Example command:
 
